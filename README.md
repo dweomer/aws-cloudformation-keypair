@@ -1,7 +1,8 @@
 # Custom::KeyPair
 
-A [custom resource][aws-cfn-custom-resources] Lambda function written in [Go][golang] and suitable
-for [direct][aws-cfn-custom-lambda] invocation by CloudFormation.
+A [custom resource][aws-cfn-custom-resources] Lambda function for creating EC2 key-pairs, written in [Go][golang],
+and suitable for [direct][aws-cfn-custom-lambda] invocation by CloudFormation. The private key material is pushed
+into an associated SSM Parameter.
 
 ## Rationale
 
@@ -11,7 +12,7 @@ I really hate specifying parameters for my templates (everything should have a d
 Because, have you seen the `aws cloudformation` CLI for specifying parameters? **`/me shudders`**
 
 Additionally, for those teams that aren't yet spun up on or are otherwise unable to leverage [Terraform](https://terraform.io) or other
-[infrastructure-as-code][iac-book] development tools, this implementation requires no other tooling that the [AWS CLI][aws-cli]
+[infrastructure-as-code][iac-book] development tools, this implementation requires no tooling other than the [AWS CLI][aws-cli]
 and optionally the [SAM][aws-sam] [CLI][aws-sam-local] for testing.
 
 ## Design
@@ -48,6 +49,11 @@ and optionally the [SAM][aws-sam] [CLI][aws-sam-local] for testing.
 ## TODO
 
 * support [indirect invocation via SNS][aws-cfn-custom-sns]
+* support alternative methods for handling the private key material, such as:
+  * cipher-text as an attribute, suitable for use in an output (NoEcho?)
+  * Simple Storage Service (S3)
+  * Secrets Manager
+  * HTTP PUT
 
 ---
 
