@@ -86,18 +86,4 @@ Outputs: ######################################################################
   Example1ParameterEncrytionKey:
     Value: !GetAtt Example1.ParameterKeyId
 
-  Example2KeyPair:
-    Value: !GetAtt Example2.KeyName
-  Example2Parameter:
-    Value: !GetAtt Example2.ParameterName
-  Example2ParameterEncrytionKey:
-    Value: !GetAtt Example2.ParameterKeyId
-
-  Example3KeyPair:
-    Value: !GetAtt Example3.KeyName
-  Example3Parameter:
-    Value: !GetAtt Example3.ParameterName
-  Example3ParameterEncrytionKey:
-    Value: !GetAtt Example3.ParameterKeyId
-
 # Outputs #####################################################################
