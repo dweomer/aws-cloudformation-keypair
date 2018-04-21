@@ -11,7 +11,8 @@ I really hate specifying parameters for my templates (everything should have a d
 Because, have you seen the `aws cloudformation` CLI for specifying parameters? **`/me shudders`**
 
 Additionally, for those teams that aren't yet spun up on or are otherwise unable to leverage [Terraform](https://terraform.io) or other
-[infrastructure-as-code][iac-book] development tools, this implementation is 
+[infrastructure-as-code][iac-book] development tools, this implementation requires no other tooling that the [AWS CLI][aws-cli]
+and optionally the [SAM][aws-sam] [CLI][aws-sam-local] for testing.
 
 ## Design
 
@@ -19,14 +20,12 @@ Additionally, for those teams that aren't yet spun up on or are otherwise unable
 
 *AS A* developer of infrastructure
 *I WANT* to create SSH key-pairs for EC2 instances by declaring such in a CloudFormation template
-*SO THAT* when applying said template I am not required to have first created such resources imperatively.
-
-
+*SO THAT* when applying said template I am not required to have first created, out of band, EC2 key-pair(s).
 
 #### Input Properties
 
 * optional `KeyName` the EC2 KeyPair name
-  * if not specified, this will be generated (see [NewPhysicalResourceID](aws/ec2/keypair/resource.go#132))
+  * if not specified, this will be generated (see [NewPhysicalResourceID](aws/ec2/keypair/resource.go#L136))
 
 * optional `ParameterPath` the SSM Parameter name prefix
   * if not specified, this will default to `/ec2/key-pair`
@@ -57,6 +56,9 @@ Additionally, for those teams that aren't yet spun up on or are otherwise unable
 [aws-sdk-golang]: <https://github.com/aws/aws-sdk-go> "AWS SDK for Go"
 [aws-lambda-golang]: <https://github.com/aws/aws-lambda-go> "AWS Lambda for Go"
 [aws-cfn]: <https://aws.amazon.com/cloudformation> "AWS CloudFormation"
+[aws-cli]: <http://docs.aws.amazon.com/cli/> "AWS CLI"
+[aws-sam]: <https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html> "AWS Serverless Application Model"
+[aws-sam-local]: <https://github.com/awslabs/aws-sam-local> "AWS SAM Local"
 [aws-cfn-resource-types]: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html> "AWS Resource Types"
 [aws-cfn-custom-resources]: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html> "AWS CloudFormation Custom Resources"
 [aws-cfn-custom-lambda]: <https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html> "AWS Lambda"
