@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: An EC2 KeyPair
+
+# See:
+# - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
+# - https://aws.amazon.com/premiumsupport/knowledge-center/best-practices-custom-cf-lambda/
+
+Resources: ####################################################################
+
+  Example1:
+    Type: Custom::KeyPair
+    DependsOn: # prevent tear-down of underlying resources on stack delete
+    - ResourceFunction
+    - ResourcePolicy
+    Properties:
+      ServiceToken: !GetAtt ResourceFunction.Arn
+      # KeyName - the EC2 key-pair name (defaults to a CloudFormation-style resource physical id)
+      # ParameterPath - the SSM parameter name prefix (defaults to `/ec2/key-pair`)
+      # ParameterKeyId - the KMS key to use to encrypt the SSM Parameter value (defaults to `alias/aws/ssm`)
+      # ParameterDescription - the SSM parameter description (optional)
+
+  # Example2:
+  #   Type: Custom::KeyPair
+  #   DependsOn: # prevent tear-down of underlying resources on stack delete
+  #   - ResourceFunction
+  #   - ResourcePolicy
+  #   Properties:
+  #     ServiceToken: !GetAtt ResourceFunction.Arn
+  #     KeyName: example-2
+  #     ParameterPath: /ssh/identity
+  #     ParameterDescription: 'Example #2'
+
+  # Example3:
+  #   Type: Custom::KeyPair
+  #   DependsOn: # prevent tear-down of underlying resources on stack delete
+  #   - ResourceFunction
+  #   - ResourcePolicy
+  #   Properties:
+  #     ServiceToken: !GetAtt ResourceFunction.Arn
+  #     KeyName: example-3
+  #     ParameterPath: ''
+  #     ParameterDescription: 'Example #3'
+
+  ResourcePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:CreateKeyPair
+              - ec2:DeleteKeyPair
+              - ec2:DescribeKeyPairs
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - ssm:PutParameter
+              - ssm:DeleteParameter
+              - ssm:DescribeParameters
+            Resource: '*'
+
+  ResourceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/.
+      Description: An EC2 key-pair
+      Handler: key-pair
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - !Ref ResourcePolicy
+      Runtime: go1.x
+      Tags:
+        Resource-Type: Custom::KeyPair
+
+# Resources ###################################################################
+
+Outputs: ######################################################################
+
+  Example1KeyPair:
+    Value: !GetAtt Example1.KeyName
+  Example1Parameter:
+    Value: !GetAtt Example1.ParameterName
+  Example1ParameterEncrytionKey:
+    Value: !GetAtt Example1.ParameterKeyId
+
+  Example2KeyPair:
+    Value: !GetAtt Example2.KeyName
+  Example2Parameter:
+    Value: !GetAtt Example2.ParameterName
+  Example2ParameterEncrytionKey:
+    Value: !GetAtt Example2.ParameterKeyId
+
+  Example3KeyPair:
+    Value: !GetAtt Example3.KeyName
+  Example3Parameter:
+    Value: !GetAtt Example3.ParameterName
+  Example3ParameterEncrytionKey:
+    Value: !GetAtt Example3.ParameterKeyId
+
+# Outputs #####################################################################
